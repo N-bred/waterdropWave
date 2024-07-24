@@ -19,71 +19,25 @@ const TOPLEFT = [0, 0];
 const TOPRIGHT = [W, 0];
 const BOTTOMLEFT = [0, H];
 const BOTTOMRIGHT = [W, H];
-
-class CanvasObject {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-        this.strokeStyle = 'black';
-        this.lineWidth = '2'
-    }
-
-    draw = () => { }
-}
-
-class Square extends CanvasObject {
-    constructor(x, y, w, h) {
-        super(x, y);
-        this.w = w;
-        this.h = h;
-    }
-
-    draw = (t) => {
-        ctx.beginPath();
-        ctx.strokeStyle = this.strokeStyle;
-        ctx.lineWidth = this.lineWidth;
-        ctx.rect(this.x, this.y, this.w, this.h);
-        ctx.stroke();
-    }
-}
-
-
-class Circle extends CanvasObject {
-    constructor(x, y, r, sA, eA) {
-        super(x, y);
-        this.r = r;
-        this.sA = sA;
-        this.eA = eA;
-    }
-
-    draw = (t) => {
-        ctx.beginPath();
-        ctx.strokeStyle = this.strokeStyle;
-        ctx.lineWidth = this.lineWidth;
-        ctx.arc(this.x, this.y, this.r + t, this.sA, this.eA);
-        ctx.stroke();
-    }
-}
-
 let canvasObjects = [];
 
 canvas.addEventListener('click', e => {
     const { clientX, clientY } = e;
     const newPos = { x: clientX - pos.x, y: clientY - pos.y };
-    canvasObjects.push(new Circle(newPos.x, newPos.y, 1, 0, 2 * Math.PI));
+    canvasObjects.push(new CustomCircle(newPos.x, newPos.y, CENTER, ctx));
 })
-
 
 const clearCanvas = (x = 0, y = 0, w = W, h = H) => { ctx.clearRect(x, y, w, h) };
 const resetState = () => { canvasObjects = [] };
 
 let frameRequest = 0;
 let isPaused = false;
+
 function main() {
     clearCanvas();
 
     for (let obj of canvasObjects) {
-        obj.draw(obj.r += .1);
+        obj.draw(frameRequest);
     }
 
     // Loop
@@ -93,6 +47,8 @@ function main() {
 main();
 handlePauseStateViewStyle();
 
+
+const radiansToDegrees = r => r * (180/Math.PI);
 
 // HTML Dynamics
 
