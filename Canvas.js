@@ -53,32 +53,55 @@ class CustomCircle extends CanvasObject {
             this.r = r;
             this.a = a;
             this.uv = [r,a];
-            this.v = [];
+            this.v = [[0,0]];
             this.squareSize = 1;
             this.center = center;
             this.generateCircle(center);
-            this.energy = 10;
+            this.energy = 63;
+            this.acceleration = 10;
         }
 
         generateCircle = () => {
           
             for (let t = 0; t < radiansToDegrees(Math.PI * 2); t += 1) {
-                const vu = [100 * (1 - this.energy/10), t];
-                const vf = [this.uv[0] + (vu[0] * Math.cos(vu[1])), this.uv[1] + (vu[0] * Math.sin(vu[1]))]
+                const vu = [1 * this.acceleration/100, t];
+                const vf = [this.uv[0] + (vu[0] * Math.cos(vu[1])), this.uv[1] + (vu[0] * -1 * Math.sin(vu[1]))]
                 this.v.push(vf);
             }
         }
 
         draw = (t) => {
+            const first = this.v[this.v.length - 1];
+
+            if ((first[0] >= 400 || first[0] < 0 || first[1] < 0 || first[1] >= 400 ) || this.energy < 0 ) {
+                if (this.acceleration < 100) {
+                    this.acceleration += 10;
+                }
+            } else if (this.energy > 0) {
+                this.energy -= .1;
+                this.acceleration -= this.energy;
+            }
+            // if ((first[0] >= 400 || first[0] < 0 || first[1] < 0 || first[1] >= 400 ) || this.energy < 0 ) {
+            //     if (this.acceleration < 100) {
+            //         this.acceleration += 10;
+            //     }
+            // } else if (this.energy > 0) {
+            //     this.energy -= .1;
+            //     this.acceleration -= this.energy;
+            // }
+
+            
+
             for (let point of this.v) {
+              
                 this.ctx.beginPath();
                 this.ctx.strokeStyle = this.strokeStyle;
                 this.ctx.lineWidth = this.lineWidth;
                 this.ctx.rect(point[0] , point[1] , this.squareSize, this.squareSize)
                 this.ctx.stroke();
             }
-            this.energy -= .1;
-            this.v = [];
+            
+            this.v = [[0,0]];
             this.generateCircle()
         }
 }
