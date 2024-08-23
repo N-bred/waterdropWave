@@ -7,7 +7,7 @@ class CanvasObject {
         this.y = y;
         this.strokeStyle = 'black';
         this.lineWidth = '2'
-        
+
     }
 
     draw = (t) => { return t }
@@ -48,60 +48,59 @@ class Circle extends CanvasObject {
 }
 
 class CustomCircle extends CanvasObject {
-        constructor(r, a, center, ctx) {
-            super(r, a, ctx);
-            this.r = r;
-            this.a = a;
-            this.uv = [r,a];
-            this.v = [[0,0]];
-            this.squareSize = 1;
-            this.center = center;
-            this.generateCircle(center);
-            this.energy = 63;
-            this.acceleration = 10;
+    constructor(r, a, center, ctx) {
+        super(r, a, ctx);
+        this.r = r;
+        this.a = a;
+        this.uv = [r, a];
+        this.v = [];
+        this.squareSize = 1;
+        this.center = center;
+        this.energy = 10;
+        this.acceleration = 10;
+        this.ra = 10;
+        this.generateCircle();
+    }
+
+    generateCircle() {
+        const circle = []
+        for (let t = 0; t < radiansToDegrees(Math.PI * 2); t += 1) {
+            const vu = [this.ra, t];
+            const vf = [this.uv[0] + (vu[0] * Math.cos(vu[1])), this.uv[1] + (vu[0] * (-1 * Math.sin(vu[1])))]
+            circle.push(vf)
         }
+        this.v.push(circle)
+    }
 
-        generateCircle = () => {
-          
-            for (let t = 0; t < radiansToDegrees(Math.PI * 2); t += 1) {
-                const vu = [1 * this.acceleration/100, t];
-                const vf = [this.uv[0] + (vu[0] * Math.cos(vu[1])), this.uv[1] + (vu[0] * -1 * Math.sin(vu[1]))]
-                this.v.push(vf);
-            }
-        }
+    draw = (t) => {
 
-        draw = (t) => {
-            const first = this.v[this.v.length - 1];
-
-            if ((first[0] >= 400 || first[0] < 0 || first[1] < 0 || first[1] >= 400 ) || this.energy < 0 ) {
-                if (this.acceleration < 100) {
-                    this.acceleration += 10;
-                }
-            } else if (this.energy > 0) {
-                this.energy -= .1;
-                this.acceleration -= this.energy;
-            }
-            // if ((first[0] >= 400 || first[0] < 0 || first[1] < 0 || first[1] >= 400 ) || this.energy < 0 ) {
-            //     if (this.acceleration < 100) {
-            //         this.acceleration += 10;
-            //     }
-            // } else if (this.energy > 0) {
-            //     this.energy -= .1;
-            //     this.acceleration -= this.energy;
-            // }
-
-            
-
-            for (let point of this.v) {
-              
+        for (let i = 0; i < this.v.length; ++i) {
+            const circle = this.v[i];
+            for (let j = 0; j < circle.length; ++j) {
+                const point = circle[j];
                 this.ctx.beginPath();
                 this.ctx.strokeStyle = this.strokeStyle;
                 this.ctx.lineWidth = this.lineWidth;
-                this.ctx.rect(point[0] , point[1] , this.squareSize, this.squareSize)
+                this.ctx.rect(point[0], point[1], this.squareSize, this.squareSize);
                 this.ctx.stroke();
             }
-            
-            this.v = [[0,0]];
-            this.generateCircle()
         }
+
+
+        if (this.energy > 0) {
+            this.energy -= .1;
+            this.ra += this.acceleration * this.energy / 100;
+
+            if (this.ra >= 400) {
+                this.acceleration *= -1;
+            }
+
+            if (this.ra < 0) {
+                this.acceleration *= -1;
+            }
+
+            this.generateCircle()
+            this.v.shift();
+        }
+    }
 }
