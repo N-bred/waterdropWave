@@ -2,9 +2,10 @@
 const canvas = document.querySelector('#canvas')
 /** @type {CanvasRenderingContext2D} */
 const ctx = canvas.getContext('2d')
+// ctx.globalAlpha = 0.1
 
-const H = 400;
-const W = 400;
+const H = 800;
+const W = 900;
 const aspectRatio = W / H;
 
 canvas.height = H;
@@ -34,7 +35,7 @@ let frameRequest = 0;
 let isPaused = false;
 
 function main() {
-    clearCanvas();
+    // clearCanvas();
 
     for (let obj of canvasObjects) {
         obj.draw(frameRequest);

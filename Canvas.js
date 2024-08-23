@@ -5,8 +5,8 @@ class CanvasObject {
         this.ctx = ctx;
         this.x = x;
         this.y = y;
-        this.strokeStyle = 'black';
-        this.lineWidth = '2'
+        this.strokeStyle = '#510aa0';
+        this.lineWidth = '1'
 
     }
 
@@ -57,7 +57,7 @@ class CustomCircle extends CanvasObject {
         this.squareSize = 1;
         this.center = center;
         this.energy = 10;
-        this.acceleration = 10;
+        this.acceleration = 100;
         this.ra = 10;
         this.generateCircle();
     }
@@ -91,7 +91,7 @@ class CustomCircle extends CanvasObject {
             this.energy -= .1;
             this.ra += this.acceleration * this.energy / 100;
 
-            if (this.ra >= 400) {
+            if (this.ra >= Math.random() * (1000 - W) + W) {
                 this.acceleration *= -1;
             }
 
@@ -100,6 +100,15 @@ class CustomCircle extends CanvasObject {
             }
 
             this.generateCircle()
+
+            // const lastCircle = this.v[this.v.length - 1];
+            // const lastPoint = lastCircle[lastCircle.length - 1];
+            // const leftHalf = lastCircle.filter(point => point[0] < this.x).sort((a,b )=> b[0] < a[0])
+        
+            // if (leftHalf[0][0] <= 0 || lastPoint[0] >= W ) {
+            //     this.acceleration *= -1;
+            // }
+
             this.v.shift();
         }
     }
